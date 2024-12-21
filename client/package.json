@@ -5,13 +5,14 @@
   "main": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node server.cjs",
+    "start": "nodemon",
     "build": "tsc",
     "dev": "vite"
   },
   "author": "Khoi Do",
   "license": "ISC",
   "devDependencies": {
+    "nodemon": "^3.1.9",
     "typescript": "^5.7.2",
     "vite": "^6.0.5"
   },

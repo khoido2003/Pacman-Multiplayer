@@ -3,11 +3,38 @@ export class GameMap {
     ctx;
     tileSize;
     tiles;
+    offsetX = 0;
+    offsetY = 0;
     constructor(tiles, tileSize = 32) {
         this.canvas = document.getElementById("gameCanvas");
         this.ctx = this.canvas.getContext("2d");
         this.tileSize = tileSize;
         this.tiles = tiles;
+        // Calc the current position and width/height of the canvas and
+        // re-render it
+        this.resizeCanvas();
+        this.calcOffsetMaze();
+        // if the browser change size, update the canvas
+        window.addEventListener("resize", () => {
+            this.resizeCanvas();
+            this.calcOffsetMaze();
+            this.render();
+        });
+    }
+    ////////////////////////////////////
+    // Calc the offset to make the maze in the center of the canvas
+    //
+    calcOffsetMaze() {
+        const maxMazeHeight = this.tiles.length * this.tileSize;
+        const maxMazeWidth = this.tiles[0].length * this.tileSize;
+        this.offsetX = (this.canvas.width - maxMazeWidth) / 2;
+        this.offsetY = (this.canvas.height - maxMazeHeight) / 2;
+        console.log(this.tiles);
+    }
+    // Calc canvas resize width and height
+    resizeCanvas() {
+        this.canvas.width = window.innerWidth;
+        this.canvas.height = window.innerHeight;
     }
     //////////////////////////////////////
     // Render the map on the screen
@@ -20,7 +47,7 @@ export class GameMap {
         }
     }
     // Draw tile
-    drawTile(x, y, tile) {
+    drawTile(y, x, tile) {
         switch (tile) {
             case 0:
                 // The space where character can move
@@ -31,6 +58,10 @@ export class GameMap {
                 this.ctx.fillStyle = "violet";
                 break;
         }
-        this.ctx.fillRect(x, y, this.tileSize, this.tileSize);
+        this.ctx.fillRect(
+        // Hoành độ
+        x * this.tileSize + this.offsetX, 
+        // Tung độ
+        y * this.tileSize + this.offsetY, this.tileSize, this.tileSize);
     }
 }
