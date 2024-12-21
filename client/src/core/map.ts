@@ -1,4 +1,4 @@
-import { isJSDocThisTag } from "typescript/lib/typescript";
+import { CONST } from "./constant";
 
 export class GameMap {
   private canvas: HTMLCanvasElement;
@@ -10,11 +10,12 @@ export class GameMap {
 
   constructor(
     tiles: number[][],
-
-    tileSize: number = 32,
+    tileSize: number = CONST.TILE_SIZE,
+    canvas: HTMLCanvasElement,
+    context: CanvasRenderingContext2D,
   ) {
-    this.canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
-    this.ctx = this.canvas.getContext("2d")!;
+    this.canvas = canvas;
+    this.ctx = context;
     this.tileSize = tileSize;
     this.tiles = tiles;
 
@@ -83,5 +84,16 @@ export class GameMap {
       this.tileSize,
       this.tileSize,
     );
+  }
+
+  ///////////////////////////////////////
+  /// GETTERs / SETTERS
+
+  get getOffsetX(): number {
+    return this.offsetX;
+  }
+
+  get getOffsetY(): number {
+    return this.offsetY;
   }
 }

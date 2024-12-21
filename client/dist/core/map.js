@@ -1,3 +1,4 @@
+import { CONST } from "./constant";
 export class GameMap {
     canvas;
     ctx;
@@ -5,9 +6,9 @@ export class GameMap {
     tiles;
     offsetX = 0;
     offsetY = 0;
-    constructor(tiles, tileSize = 32) {
-        this.canvas = document.getElementById("gameCanvas");
-        this.ctx = this.canvas.getContext("2d");
+    constructor(tiles, tileSize = CONST.TILE_SIZE, canvas, context) {
+        this.canvas = canvas;
+        this.ctx = context;
         this.tileSize = tileSize;
         this.tiles = tiles;
         // Calc the current position and width/height of the canvas and
@@ -63,5 +64,13 @@ export class GameMap {
         x * this.tileSize + this.offsetX, 
         // Tung độ
         y * this.tileSize + this.offsetY, this.tileSize, this.tileSize);
+    }
+    ///////////////////////////////////////
+    /// GETTERs / SETTERS
+    get getOffsetX() {
+        return this.offsetX;
+    }
+    get getOffsetY() {
+        return this.offsetY;
     }
 }
