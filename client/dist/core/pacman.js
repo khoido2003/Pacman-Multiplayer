@@ -1,12 +1,12 @@
-import { CONST } from "./constant";
+import { CONST, Direction } from "./constant";
 export class Pacman {
     ctx;
     startRow = CONST.PACMAN_START_ROW;
     startCol = CONST.PACMAN_START_COL;
     gameMap;
-    // Init position in X cors
+    // Position in X cors
     x;
-    // Init position in Y cors
+    // Position in Y cors
     y;
     size;
     speed = CONST.PACMAN_SPEED;
@@ -14,7 +14,7 @@ export class Pacman {
     // image and render it to the canvas
     //////////////////////////////////////////
     // Using canvas to draw the character
-    constructor(ctx, x, y, size = 30, gameMap) {
+    constructor(ctx, x, y, size = CONST.PACMAN_SIZE, gameMap) {
         this.ctx = ctx;
         this.x = x;
         this.y = y;
@@ -58,20 +58,54 @@ export class Pacman {
         this.ctx.fill();
         this.ctx.closePath();
     }
+    ////////////////////////////////////////////
+    canMove(direction) {
+        // Calculate the next position based on the current direction
+        let nextX = this.x;
+        let nextY = this.y;
+        switch (direction) {
+            case Direction.UP:
+                nextY -= this.speed;
+                break;
+            case Direction.DOWN:
+                nextY += this.speed;
+                break;
+            case Direction.RIGHT:
+                nextX += this.speed;
+                break;
+            case Direction.LEFT:
+                nextX -= this.speed;
+                break;
+        }
+        // Convert the next position to tile indices
+        const tileX = Math.round(nextX / CONST.TILE_SIZE);
+        const tileY = Math.round(nextY / CONST.TILE_SIZE);
+        console.log(tileX, tileY, this.gameMap.getTilesMatrixPos[tileY][tileX]);
+        // Check bounds and ensure the tile is walkable
+        return (tileY >= 0 &&
+            tileY < this.gameMap.getTilesMatrixPos.length &&
+            tileX >= 0 &&
+            tileX < this.gameMap.getTilesMatrixPos[0].length &&
+            this.gameMap.getTilesMatrixPos[tileY][tileX] === 0);
+    }
     // Control the pacman
     move(direction) {
         switch (direction) {
-            case "up":
-                this.y -= this.speed;
+            case Direction.UP:
+                if (this.canMove(Direction.UP))
+                    this.y -= this.speed;
                 break;
-            case "down":
-                this.y += this.speed;
+            case Direction.DOWN:
+                if (this.canMove(Direction.DOWN))
+                    this.y += this.speed;
                 break;
-            case "right":
-                this.x += this.speed;
+            case Direction.RIGHT:
+                if (this.canMove(Direction.RIGHT))
+                    this.x += this.speed;
                 break;
-            case "left":
-                this.x -= this.speed;
+            case Direction.LEFT:
+                if (this.canMove(Direction.LEFT))
+                    this.x -= this.speed;
                 break;
         }
     }

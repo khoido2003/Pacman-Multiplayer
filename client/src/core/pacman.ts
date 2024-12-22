@@ -1,5 +1,10 @@
-import { CONST } from "./constant";
+import { CONST, Direction } from "./constant";
 import { GameMap } from "./map";
+
+interface Position {
+  x: number;
+  y: number;
+}
 
 export class Pacman {
   private ctx: CanvasRenderingContext2D;
@@ -8,10 +13,10 @@ export class Pacman {
   private startCol: number = CONST.PACMAN_START_COL;
   private gameMap: GameMap;
 
-  // Init position in X cors
+  // Position in X cors
   private x: number;
 
-  // Init position in Y cors
+  // Position in Y cors
   private y: number;
   private size: number;
   private speed: number = CONST.PACMAN_SPEED;
@@ -26,7 +31,7 @@ export class Pacman {
     ctx: CanvasRenderingContext2D,
     x: number,
     y: number,
-    size = 30,
+    size: number = CONST.PACMAN_SIZE,
     gameMap: GameMap,
   ) {
     this.ctx = ctx;
@@ -87,23 +92,60 @@ export class Pacman {
     this.ctx.closePath();
   }
 
-  // Control the pacman
-  move(direction: string) {
+  ////////////////////////////////////////////
+
+  canMove(direction: Direction): boolean {
+    // Calculate the next position based on the current direction
+    let nextX = this.x;
+    let nextY = this.y;
+
     switch (direction) {
-      case "up":
-        this.y -= this.speed;
+      case Direction.UP:
+        nextY -= this.speed;
+        break;
+      case Direction.DOWN:
+        nextY += this.speed;
+        break;
+      case Direction.RIGHT:
+        nextX += this.speed;
+        break;
+      case Direction.LEFT:
+        nextX -= this.speed;
+        break;
+    }
+
+    // Convert the next position to tile indices
+    const tileX = Math.round(nextX / CONST.TILE_SIZE);
+    const tileY = Math.round(nextY / CONST.TILE_SIZE);
+    console.log(tileX, tileY, this.gameMap.getTilesMatrixPos[tileY][tileX]);
+
+    // Check bounds and ensure the tile is walkable
+    return (
+      tileY >= 0 &&
+      tileY < this.gameMap.getTilesMatrixPos.length &&
+      tileX >= 0 &&
+      tileX < this.gameMap.getTilesMatrixPos[0].length &&
+      this.gameMap.getTilesMatrixPos[tileY][tileX] === 0
+    );
+  }
+
+  // Control the pacman
+  move(direction: Direction) {
+    switch (direction) {
+      case Direction.UP:
+        if (this.canMove(Direction.UP)) this.y -= this.speed;
         break;
 
-      case "down":
-        this.y += this.speed;
+      case Direction.DOWN:
+        if (this.canMove(Direction.DOWN)) this.y += this.speed;
         break;
 
-      case "right":
-        this.x += this.speed;
+      case Direction.RIGHT:
+        if (this.canMove(Direction.RIGHT)) this.x += this.speed;
         break;
 
-      case "left":
-        this.x -= this.speed;
+      case Direction.LEFT:
+        if (this.canMove(Direction.LEFT)) this.x -= this.speed;
         break;
     }
   }
