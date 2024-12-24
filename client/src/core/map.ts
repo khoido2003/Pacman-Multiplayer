@@ -8,6 +8,7 @@ export class GameMap {
   private offsetX: number = 0;
   private offsetY: number = 0;
   private tilesMatrixPos: number[][];
+  private updateCallback: (() => void) | null = null;
 
   constructor(
     tiles: number[][],
@@ -30,10 +31,22 @@ export class GameMap {
 
     // if the browser change size, update the canvas
     window.addEventListener("resize", () => {
-      this.resizeCanvas();
-      this.calcOffsetMaze();
-      this.render();
+      this.resizeCanvasAndUpdate();
     });
+  }
+
+  setUpdateCallback(callback: () => void) {
+    this.updateCallback = callback;
+  }
+
+  private resizeCanvasAndUpdate() {
+    this.resizeCanvas();
+    this.tilesMatrixPos = this.calcOffsetMaze();
+    this.render();
+
+    if (this.updateCallback) {
+      this.updateCallback();
+    }
   }
 
   ////////////////////////////////////
@@ -57,17 +70,18 @@ export class GameMap {
         // original value, else return value  =0
 
         // Map canvas coordinates back to the tiles matrix
-        const canvasX = col * this.tileSize - this.offsetX;
-        const canvasY = row * this.tileSize - this.offsetY;
+        const mazeX = col * this.tileSize - this.offsetX;
+        const mazeY = row * this.tileSize - this.offsetY;
 
-        const tileX = Math.floor(canvasX / this.tileSize);
-        const tileY = Math.floor(canvasY / this.tileSize);
+        const tileX = Math.floor(mazeX / this.tileSize);
+        const tileY = Math.floor(mazeY / this.tileSize);
         if (
           tileY >= 0 &&
+          tileX >= 0 &&
           tileY < this.tiles.length &&
           tileX < this.tiles[0].length
         ) {
-          return this.tiles[tileY][tileX];
+          return this.tiles[tileY][tileX] || 0;
         }
 
         return 0;
@@ -121,6 +135,13 @@ export class GameMap {
       this.tileSize,
       this.tileSize,
     );
+    // Create border color for each wall in dev mode so it will be easier to see the
+    // collision
+    if (tileValue === 1) {
+      this.ctx.strokeStyle = "yellow";
+      this.ctx.lineWidth = 2;
+      this.ctx.strokeRect(posX, posY, this.tileSize, this.tileSize);
+    }
   }
 
   ///////////////////////////////////////

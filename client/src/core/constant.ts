@@ -1,9 +1,10 @@
 export const CONST = {
-  PACMAN_SPEED: 5,
+  PACMAN_SPEED: 32,
   TILE_SIZE: 32,
   PACMAN_START_ROW: 1,
   PACMAN_START_COL: 1,
   PACMAN_SIZE: 12,
+  PACMAN_COLLIDE: 24,
 };
 
 export enum Direction {

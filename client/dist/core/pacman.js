@@ -10,6 +10,9 @@ export class Pacman {
     y;
     size;
     speed = CONST.PACMAN_SPEED;
+    // Store the init offset of each screen size
+    curOffsetX;
+    curOffsetY;
     // There is two way to render the character: draw with canvas or use sprite
     // image and render it to the canvas
     //////////////////////////////////////////
@@ -21,24 +24,30 @@ export class Pacman {
         this.size = size;
         this.speed = CONST.PACMAN_SPEED;
         this.gameMap = gameMap;
-        // At first init, calc the the position of pacman in current window size
-        this.calcCurrentPosition();
-        window.addEventListener("resize", () => {
-            // After the window change, calc the new position again
+        this.curOffsetX = gameMap.getOffsetX;
+        this.curOffsetY = gameMap.getOffsetY;
+        this.gameMap.setUpdateCallback(() => {
             this.calcCurrentPosition();
-            // After that, re-render the screen to update
             this.render();
         });
     }
     calcCurrentPosition() {
+        console.log("PACMAN: ", this.gameMap.getOffsetX, this.gameMap.getOffsetY);
+        // Determine the current tile position based on the map layout and offset
+        const curTileX = Math.ceil((this.x - this.curOffsetX - CONST.TILE_SIZE / 2) / CONST.TILE_SIZE);
+        const curTileY = Math.ceil((this.y - this.curOffsetY - CONST.TILE_SIZE / 2) / CONST.TILE_SIZE);
+        console.log(curTileX, curTileY);
+        // Recalculate the exact pixel position to align with the center of the tile
         this.x =
-            this.startCol * CONST.TILE_SIZE +
+            curTileX * CONST.TILE_SIZE +
                 this.gameMap.getOffsetX +
                 CONST.TILE_SIZE / 2;
         this.y =
-            this.startRow * CONST.TILE_SIZE +
+            curTileY * CONST.TILE_SIZE +
                 this.gameMap.getOffsetY +
                 CONST.TILE_SIZE / 2;
+        this.curOffsetX = this.gameMap.getOffsetX;
+        this.curOffsetY = this.gameMap.getOffsetY;
     }
     ///////////////////////////////////////////////////
     //
