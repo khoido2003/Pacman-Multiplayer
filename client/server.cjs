@@ -25,10 +25,24 @@ const server = http.createServer(async (req, res) => {
         contentType = "text/html";
       }
     } else if (req.url.startsWith("/assets/")) {
+      console.log(req.url);
       filePath = path.join(__dirname, "src", req.url);
       const extname = path.extname(filePath);
       if (extname === ".json") {
         contentType = "application/json";
+      }
+      if (extname === ".png") {
+        contentType = "image/png";
+      } else if (extname === ".jpg" || extname === ".jpeg") {
+        contentType = "image/jpeg";
+      } else if (extname === ".gif") {
+        contentType = "image/gif";
+      } else if (extname === ".svg") {
+        contentType = "image/svg+xml";
+      } else if (extname === ".webp") {
+        contentType = "image/webp";
+      } else {
+        contentType = "application/octet-stream"; // Default binary file type
       }
     } else {
       filePath = path.join(__dirname, "./src/pages/404.html");

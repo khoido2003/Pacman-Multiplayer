@@ -7,6 +7,8 @@ export class GameMap {
   private tiles: number[][];
   private offsetX: number = 0;
   private offsetY: number = 0;
+  private tilesMatrixPos: number[][];
+  private updateCallback: (() => void) | null = null;
 
   constructor(
     tiles: number[][],
@@ -22,26 +24,72 @@ export class GameMap {
     // Calc the current position and width/height of the canvas and
     // re-render it
     this.resizeCanvas();
-    this.calcOffsetMaze();
+
+    this.tilesMatrixPos = this.calcOffsetMaze();
+    console.log(this.tilesMatrixPos);
+    console.log(this.tiles);
 
     // if the browser change size, update the canvas
     window.addEventListener("resize", () => {
-      this.resizeCanvas();
-      this.calcOffsetMaze();
-      this.render();
+      this.resizeCanvasAndUpdate();
     });
+  }
+
+  setUpdateCallback(callback: () => void) {
+    this.updateCallback = callback;
+  }
+
+  private resizeCanvasAndUpdate() {
+    this.resizeCanvas();
+    this.tilesMatrixPos = this.calcOffsetMaze();
+    this.render();
+
+    if (this.updateCallback) {
+      this.updateCallback();
+    }
   }
 
   ////////////////////////////////////
   // Calc the offset to make the maze in the center of the canvas
   //
-  private calcOffsetMaze() {
+  private calcOffsetMaze(): number[][] {
     const maxMazeHeight = this.tiles.length * this.tileSize;
     const maxMazeWidth = this.tiles[0].length * this.tileSize;
 
     this.offsetX = (this.canvas.width - maxMazeWidth) / 2;
     this.offsetY = (this.canvas.height - maxMazeHeight) / 2;
-    console.log(this.tiles);
+
+    // Mapping from tiles matrix to the real matrix that draw on canvas with
+    // x coordinates and y coordinates
+    const totalRows = Math.ceil(this.canvas.height / this.tileSize);
+    const totalCols = Math.ceil(this.canvas.width / this.tileSize);
+
+    const tilesMatrixPos = Array.from({ length: totalRows }, (_, row) => {
+      return Array.from({ length: totalCols }, (_, col) => {
+        // If the position is the same as the tiles matrix then keep the
+        // original value, else return value  =0
+
+        // Map canvas coordinates back to the tiles matrix
+        const mazeX = col * this.tileSize - this.offsetX;
+        const mazeY = row * this.tileSize - this.offsetY;
+
+        const tileX = Math.floor(mazeX / this.tileSize);
+        const tileY = Math.floor(mazeY / this.tileSize);
+        if (
+          tileY >= 0 &&
+          tileX >= 0 &&
+          tileY < this.tiles.length &&
+          tileX < this.tiles[0].length
+        ) {
+          return this.tiles[tileY][tileX] || 0;
+        }
+
+        return 0;
+      });
+    });
+
+    console.log(this.tilesMatrixPos);
+    return tilesMatrixPos;
   }
 
   // Calc canvas resize width and height
@@ -63,8 +111,8 @@ export class GameMap {
   }
 
   // Draw tile
-  private drawTile(y: number, x: number, tile: number) {
-    switch (tile) {
+  private drawTile(y: number, x: number, tileValue: number) {
+    switch (tileValue) {
       case 0:
         // The space where character can move
         this.ctx.fillStyle = "black";
@@ -75,15 +123,25 @@ export class GameMap {
         this.ctx.fillStyle = "violet";
         break;
     }
+
+    const posX = x * this.tileSize + this.offsetX;
+    const posY = y * this.tileSize + this.offsetY;
+
     this.ctx.fillRect(
       // Hoành độ
-      x * this.tileSize + this.offsetX,
-
+      posX,
       // Tung độ
-      y * this.tileSize + this.offsetY,
+      posY,
       this.tileSize,
       this.tileSize,
     );
+    // Create border color for each wall in dev mode so it will be easier to see the
+    // collision
+    if (tileValue === 1) {
+      this.ctx.strokeStyle = "yellow";
+      this.ctx.lineWidth = 2;
+      this.ctx.strokeRect(posX, posY, this.tileSize, this.tileSize);
+    }
   }
 
   ///////////////////////////////////////
@@ -95,5 +153,13 @@ export class GameMap {
 
   get getOffsetY(): number {
     return this.offsetY;
+  }
+
+  get getTiles(): number[][] {
+    return this.tiles;
+  }
+
+  get getTilesMatrixPos(): number[][] {
+    return this.tilesMatrixPos;
   }
 }
