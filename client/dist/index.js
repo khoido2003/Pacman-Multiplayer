@@ -30,10 +30,10 @@ async function init() {
     // Init events
     events = new EventManager();
     // Register controls
-    events.register("ArrowUp", () => pacman.move(Direction.UP));
-    events.register("ArrowDown", () => pacman.move(Direction.DOWN));
-    events.register("ArrowLeft", () => pacman.move(Direction.LEFT));
-    events.register("ArrowRight", () => pacman.move(Direction.RIGHT));
+    events.register("ArrowUp", () => pacman.changeDirection(Direction.UP));
+    events.register("ArrowDown", () => pacman.changeDirection(Direction.DOWN));
+    events.register("ArrowLeft", () => pacman.changeDirection(Direction.LEFT));
+    events.register("ArrowRight", () => pacman.changeDirection(Direction.RIGHT));
 }
 const engine = new GameEngine(
 // Function to update
