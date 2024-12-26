@@ -88,11 +88,11 @@ export class GameMap {
         switch (tileValue) {
             case 0:
                 // The space where character can move
-                this.ctx.fillStyle = "black";
+                this.ctx.fillStyle = "#1C1C2B";
                 break;
             case 1:
                 // Wall or obstacle that block the way
-                this.ctx.fillStyle = "violet";
+                this.ctx.fillStyle = "#181825";
                 break;
         }
         const posX = x * this.tileSize + this.offsetX;
@@ -105,7 +105,7 @@ export class GameMap {
         // Create border color for each wall in dev mode so it will be easier to see the
         // collision
         if (tileValue === 1) {
-            this.ctx.strokeStyle = "yellow";
+            this.ctx.strokeStyle = "#7287fd";
             this.ctx.lineWidth = 2;
             this.ctx.strokeRect(posX, posY, this.tileSize, this.tileSize);
         }
