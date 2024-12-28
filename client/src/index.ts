@@ -3,6 +3,7 @@ import { GameEngine } from "./core/engine";
 import { EventManager } from "./core/events";
 import { GameMap } from "./core/map";
 import { Pacman } from "./core/pacman";
+import { WebSocketClient } from "./network/websocket";
 
 console.log("Running the scripts");
 
@@ -24,6 +25,8 @@ let pacman: Pacman;
 let events: EventManager;
 
 async function init() {
+  const wsClient = new WebSocketClient();
+
   // Init Map
   const data = await loadMap();
   gameMap = new GameMap(data.tiles, CONST.TILE_SIZE, canvas, ctx!);
