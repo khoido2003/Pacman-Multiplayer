@@ -5,19 +5,23 @@
   "main": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon",
-    "build": "tsc",
-    "dev": "vite"
+    "start": "concurrently \"npm run dev\" \"npm run css:watch\"",
+    "dev": "nodemon",
+    "css:watch": "npx tailwindcss -i ./src/styles/input.css -o ./src/styles/output.css --watch",
+    "build": "tsc"
   },
   "author": "Khoi Do",
   "license": "ISC",
   "devDependencies": {
+    "concurrently": "^9.1.1",
     "nodemon": "^3.1.9",
+    "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2",
     "vite": "^6.0.5"
   },
   "dependencies": {
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "uuid": "^11.0.3"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"

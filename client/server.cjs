@@ -9,6 +9,11 @@ const server = http.createServer(async (req, res) => {
   try {
     if (req.url === "/") {
       filePath = path.join(__dirname, "./src/pages/index.html");
+    } else if (req.url === "/welcome") {
+      filePath = path.join(__dirname, "./src/pages/welcome.html");
+    } else if (req.url.startsWith("/styles/")) {
+      filePath = path.join(__dirname, "src", req.url);
+      contentType = "text/css";
     } else if (req.url.startsWith("/dist/")) {
       filePath = path.join(__dirname, req.url);
       if (!filePath.endsWith(".js")) {
