@@ -3,7 +3,6 @@ import { GameEngine } from "./core/engine";
 import { EventManager } from "./core/events";
 import { GameMap } from "./core/map";
 import { Pacman } from "./core/pacman";
-import { WebSocketClient } from "./network/websocket";
 console.log("Running the scripts");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -18,7 +17,6 @@ let gameMap;
 let pacman;
 let events;
 async function init() {
-    const wsClient = new WebSocketClient();
     // Init Map
     const data = await loadMap();
     gameMap = new GameMap(data.tiles, CONST.TILE_SIZE, canvas, ctx);

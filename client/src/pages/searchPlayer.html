@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Search Players - Pacman Game</title>
+
+  <!-- Tailwind CSS -->
+  <link href="/styles/output.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #fff;
+      font-family: 'Press Start 2P', cursive;
+    }
+
+    input,
+    button {
+      font-family: 'Press Start 2P', cursive;
+    }
+  </style>
+</head>
+
+<body class="flex items-center justify-center h-screen">
+  <div class="w-full max-w-3xl bg-gray-900 p-10 rounded-lg shadow-lg border-4 border-yellow-500">
+    <h1 class="text-3xl text-center text-yellow-400 mb-8 leading-relaxed">
+      Search Players
+    </h1>
+
+    <!-- Search Bar -->
+    <div class="mb-6">
+      <input type="text" id="searchPlayerInput"
+        class="w-full p-4 rounded-md bg-gray-700 border-2 border-yellow-500 focus:outline-none focus:border-yellow-300 text-yellow-100"
+        placeholder="Search players by name or username..." />
+    </div>
+
+    <!-- Players Section -->
+    <div class="bg-gray-800 p-6 rounded-md border-2 border-yellow-500">
+      <ul class="text-yellow-100 space-y-4" id="playerList">
+        <!-- Players will be dynamically populated here -->
+        <li>No players found.</li>
+      </ul>
+      <div class="flex justify-between mt-4">
+        <button id="prevPageButton"
+          class="p-4 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition text-sm" disabled>
+          Previous
+        </button>
+        <button id="nextPageButton"
+          class="p-4 rounded-md bg-gray-700 text-gray-300 hover:bg-gray-600 transition text-sm">
+          Next
+        </button>
+      </div>
+    </div>
+
+    <!-- Back to Lobby -->
+    <div class="flex justify-center mt-6">
+      <button id="backToLobbyButton"
+        class="p-4 rounded-md bg-red-500 text-gray-900 hover:bg-red-400 transition text-lg">
+        Back to Lobby
+      </button>
+    </div>
+  </div>
+</body>
+
+<script type="module" src="/dist/controller/searchPlayer.js">
+
+</script>
+
+</html>

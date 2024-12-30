@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Welcome - Pacman Game</title>
+  <title>Create Match - Pacman Game</title>
 
   <!-- Tailwind CSS -->
   <link href="/styles/output.css" rel="stylesheet">
@@ -27,25 +27,33 @@
 </head>
 
 <body class="flex items-center justify-center h-screen">
-  <div class="w-full max-w-lg bg-gray-900 p-10 rounded-lg shadow-lg
-      border-4 border-yellow-500">
+  <div class="w-full max-w-lg bg-gray-900 p-10 rounded-lg shadow-lg border-4 border-yellow-500">
     <h1 class="text-3xl text-center text-yellow-400 mb-8 leading-relaxed">
-      Welcome to Pacman Multiplayer
+      Create a New Match
     </h1>
 
-    <form id="welcomeForm" class="flex flex-col space-y-6">
+    <!-- Match Creation Form -->
+    <form id="createMatchForm" class="flex flex-col space-y-6">
       <div>
-        <label for="username" class="block text-yellow-300 mb-2">Enter Your Username:</label>
-        <input type="text" id="username" name="username"
+        <label for="matchName" class="block text-yellow-300 mb-2">Enter Match Name:</label>
+        <input type="text" id="matchName" name="matchName"
           class="w-full p-4 rounded-md bg-gray-800 border-2 border-yellow-500 focus:outline-none focus:border-yellow-300 text-yellow-100"
-          placeholder="Your cool name" required />
+          placeholder="Match name" required />
       </div>
-      <button type="submit" class="p-4 rounded-md bg-yellow-500 text-gray-900 hover:bg-yellow-400 transition text-lg">
-        Join the Lobby
+      <button type="submit" id="createMatchButton"
+        class="p-4 rounded-md bg-yellow-500 text-gray-900 hover:bg-yellow-400 transition text-lg">
+        Create Match
       </button>
     </form>
+
+    <!-- Feedback -->
+    <div id="feedback" class="text-center text-yellow-300 mt-6 hidden">
+      <p id="feedbackMessage"></p>
+    </div>
   </div>
 </body>
-<script type="module" src="/dist/controller/welcome.js"></script>
+
+<script type="module" src="/dist/controller/createMatch.js">
+</script>
 
 </html>
