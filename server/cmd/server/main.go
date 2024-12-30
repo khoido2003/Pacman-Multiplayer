@@ -3,16 +3,46 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
+	"os/signal"
 	"server/internal/network"
+	"syscall"
 )
 
 func main() {
+
+	// Start new threadpool with 100 workers
+	pool := network.NewPool(100)
+
 	// Start websocket server
-	http.HandleFunc("/ws", network.HandleConnections)
+	http.HandleFunc("/game", func(response http.ResponseWriter, request *http.Request) {
+		network.HandleConnections(response, request, pool)
+	})
 
-	err := http.ListenAndServe("5689", nil)
-	if err != nil {
-		log.Fatal("Server failed to start! ", err)
+	// Setup the server
+	server := &http.Server{Addr: ":5689"}
+
+	///////////////////////////////////////////////////////////////
+
+	// This make sure clean up the resource after shutdown the server
+	signalChan := make(chan os.Signal, 1)
+
+	// receive shutdown signal like ctrl + C in terminal
+	signal.Notify(signalChan, os.Interrupt, syscall.SIGTERM)
+
+	// Signal handling: Create a new goroutine to run the cleanup when
+	// shutdown the server with ctrl C in the terminal
+	go func() {
+		<-signalChan
+		log.Println("Shutting down server...")
+		pool.Stop()
+		server.Close()
+	}()
+
+	///////////////////////////////////////////////////////////////
+
+	log.Println("Websocket server started on port :5689")
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Fatal("ListenAndServe Error: ", err)
 	}
-
 }

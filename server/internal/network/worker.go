@@ -3,6 +3,7 @@ package network
 import (
 	"log"
 	"sync"
+	"time"
 )
 
 // Worker
@@ -23,13 +24,33 @@ func NewWorker(id int, wg *sync.WaitGroup) *Worker {
 
 // Start worker
 func (w *Worker) Start(JobQueue *chan func()) {
+
+	// Create a new go routine to do the job
 	go func() {
-		defer w.WaitGroup.Done()
 
 		for job := range *JobQueue {
+
+			// if worker running into error
+			defer func() {
+				if r := recover(); r != nil {
+					log.Printf("Worker %d encoutered an error: %v", w.ID, r)
+				}
+			}()
+
 			log.Printf("Worker %d started job: ", w.ID)
-			job()
+
+			func() {
+				defer func() {
+					log.Printf("Worker %d cleaning up resources: ", w.ID)
+				}()
+
+				// Start worker to do the job
+				job()
+			}()
+
 			log.Printf("Worker %d finished job: ", w.ID)
+
+			defer w.WaitGroup.Done()
 		}
 	}()
 }
@@ -67,13 +88,29 @@ func (p *Pool) AddJob(job func()) {
 
 	// Since add new job into full queue might cause deadlock panic so
 	// using a new goroutine to do this
+
+	// Retry sending to the channel with a timeout or a maximum retry limit
 	go func() {
-		p.JobQueue <- job
+		for {
+			select {
+			case p.JobQueue <- job:
+				return // Successfully added job
+			default:
+				log.Println("JobQueue is full, retrying...")
+				time.Sleep(time.Millisecond * 100) // Retry after a short delay
+			}
+		}
 	}()
 }
 
-// Stop the worker pool
+// Stop the worker pool but still wait for all the current job finished before
+// shutdown entirely
 func (p *Pool) Stop() {
 	close(p.JobQueue)
 	p.WaitGroup.Wait()
+}
+
+// Expose the WaitGroup
+func (p *Pool) GetWaitGroup() *sync.WaitGroup {
+	return p.WaitGroup
 }

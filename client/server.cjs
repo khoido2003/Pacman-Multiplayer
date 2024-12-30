@@ -7,8 +7,27 @@ const server = http.createServer(async (req, res) => {
   let contentType = "text/html"; // Default content type
 
   try {
-    if (req.url === "/") {
+    // Routes handler
+    if (req.url === "/match") {
       filePath = path.join(__dirname, "./src/pages/index.html");
+    } else if (req.url === "/") {
+      filePath = path.join(__dirname, "./src/pages/welcome.html");
+    } else if (req.url === "/lobby") {
+      filePath = path.join(__dirname, "./src/pages/lobby.html");
+    } else if (req.url === "/searchMatch") {
+      filePath = path.join(__dirname, "./src/pages/searchMatch.html");
+    } else if (req.url === "/searchPlayer") {
+      filePath = path.join(__dirname, "./src/pages/searchPlayer.html");
+    } else if (req.url === "/createMatch") {
+      filePath = path.join(__dirname, "./src/pages/createMatch.html");
+    }
+
+    /////////////////////////////////////////////////////////////
+
+    // Resourse handler
+    else if (req.url.startsWith("/styles/")) {
+      filePath = path.join(__dirname, "src", req.url);
+      contentType = "text/css";
     } else if (req.url.startsWith("/dist/")) {
       filePath = path.join(__dirname, req.url);
       if (!filePath.endsWith(".js")) {

@@ -179,7 +179,6 @@ export class Pacman {
         // Convert the next position to tile indices
         const tileX = Math.round(nextX / CONST.TILE_SIZE);
         const tileY = Math.round(nextY / CONST.TILE_SIZE);
-        console.log(tileX, tileY, this.gameMap.getTilesMatrixPos[tileY][tileX]);
         // Check bounds and ensure the tile is walkable
         return (tileY >= 0 &&
             tileY < this.gameMap.getTilesMatrixPos.length &&

@@ -110,38 +110,38 @@ export class GameMap {
     }
   }
 
-  // Draw tile
   private drawTile(y: number, x: number, tileValue: number) {
     switch (tileValue) {
       case 0:
-        // The space where character can move
-        this.ctx.fillStyle = "#1C1C2B";
+        // The space where characters can move
+        this.ctx.fillStyle = "#1a1a1a"; // Dark arcade-style background
         break;
 
       case 1:
-        // Wall or obstacle that block the way
-        this.ctx.fillStyle = "#181825";
+        // Wall or obstacle that blocks the way
+        this.ctx.fillStyle = "#1a1a1a"; // Muted retro blue for walls
         break;
     }
 
     const posX = x * this.tileSize + this.offsetX;
     const posY = y * this.tileSize + this.offsetY;
 
-    this.ctx.fillRect(
-      // Hoành độ
-      posX,
-      // Tung độ
-      posY,
-      this.tileSize,
-      this.tileSize,
-    );
-    // Create border color for each wall in dev mode so it will be easier to see the
-    // collision
+    // Draw the base tile
+    this.ctx.fillRect(posX, posY, this.tileSize, this.tileSize);
+
+    // Add a subtle glowing effect or border for walls
     if (tileValue === 1) {
-      this.ctx.strokeStyle = "#7287fd";
+      this.ctx.strokeStyle = "#00b8f4"; // Soft light cyan for border
       this.ctx.lineWidth = 2;
       this.ctx.strokeRect(posX, posY, this.tileSize, this.tileSize);
     }
+
+    // // Dev mode: Add collision borders for easier debugging
+    // if (this.devMode && tileValue === 1) {
+    //   this.ctx.strokeStyle = "#ff00ff"; // Neon pink for dev mode borders
+    //   this.ctx.lineWidth = 2;
+    //   this.ctx.strokeRect(posX, posY, this.tileSize, this.tileSize);
+    // }
   }
 
   ///////////////////////////////////////

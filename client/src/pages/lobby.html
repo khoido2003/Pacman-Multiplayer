@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Lobby - Pacman Game</title>
+
+  <!-- Tailwind CSS -->
+  <link href="/styles/output.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #fff;
+      font-family: 'Press Start 2P', cursive;
+    }
+
+    input,
+    button {
+      font-family: 'Press Start 2P', cursive;
+    }
+  </style>
+</head>
+
+<body class="flex flex-col items-center justify-center h-screen
+gap-10">
+  <div class="w-full max-w-3xl bg-gray-900 p-10 rounded-lg shadow-lg border-4 border-yellow-500">
+    <h1 class="text-3xl text-center text-yellow-400 mb-8 leading-relaxed">
+      Pacman Multiplayer Lobby
+    </h1>
+
+    <!-- Players Summary -->
+    <div class="bg-gray-800 p-6 rounded-md border-2 border-yellow-500 mb-6">
+      <h2 class="text-yellow-300 text-lg mb-4">Players in Lobby:</h2>
+      <p class="text-yellow-100 mb-4">
+        Total Players Online: <span id="totalPlayers">0</span>
+      </p>
+      <button id="findFriendsButton"
+        class="p-4 rounded-md bg-yellow-500 text-gray-900 hover:bg-yellow-400 transition text-lg">
+        Search Players or Friends
+      </button>
+    </div>
+
+    <!-- Matches Section -->
+    <div id="matches" class="bg-gray-800 p-6 rounded-md border-2 border-yellow-500 mb-6">
+      <h2 class="text-yellow-300 text-lg mb-4">Available Matches:</h2>
+      <p class="text-yellow-100 mb-4">
+        Use the button below to search and join a match!
+      </p>
+      <button id="searchMatchesButton"
+        class="p-4 rounded-md bg-blue-500 text-gray-900 hover:bg-blue-400 transition text-lg">
+        Search Matches
+      </button>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex justify-center mt-6 space-x-6">
+      <button id="createMatchButton"
+        class="p-4 rounded-md bg-green-500 text-gray-900 hover:bg-green-400 transition text-lg">
+        Create Match
+      </button>
+      <button id="leaveLobbyButton" class="p-4 rounded-md bg-red-500 text-gray-900 hover:bg-red-400 transition text-lg">
+        Leave Lobby
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-5">
+    Created by Caynhalavuon
+  </div>
+</body>
+
+<script type="module" src="/dist/controller/lobby.js">
+
+</script>
+
+</html>
