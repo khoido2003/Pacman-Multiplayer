@@ -1,3 +1,5 @@
+import { WebSocketClient } from "../network/websocket";
+
 namespace Lobby {
   const totalPlayersElement = document.getElementById(
     "totalPlayers",
@@ -19,6 +21,15 @@ namespace Lobby {
     "findFriendsButton",
   ) as HTMLButtonElement;
 
+  const username = localStorage.getItem("username") as string;
+
+  if (!username) {
+    window.location.href = "/";
+  }
+
+  const ws = WebSocketClient.getInstance(username);
+  console.log(ws.isConnected());
+
   ////////////////////////////////////////////
 
   // States
@@ -28,7 +39,6 @@ namespace Lobby {
   //////////////////////////////////////////
 
   // Render screen
-
   // Render the total player count
   const renderPlayerCount = () => {
     totalPlayersElement.textContent = totalPlayers + "";
