@@ -10,11 +10,11 @@ welcomeForm.addEventListener("submit", (event) => {
         const ws = WebSocketClient.getInstance(username);
         ws.on(EventType.OPEN, () => {
             console.log("Websocket connected!");
+            window.location.href = "/lobby";
         });
         ws.on(EventType.MESSAGE, (data) => {
             console.log("Received: ", data);
         });
     }
-    window.location.href = "/lobby";
 });
 //////////////////////////////////////////////////////////

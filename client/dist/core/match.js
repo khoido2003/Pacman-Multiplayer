@@ -1,8 +1,8 @@
-import { CONST, Direction } from "./core/constant";
-import { GameEngine } from "./core/engine";
-import { EventManager } from "./core/events";
-import { GameMap } from "./core/map";
-import { Pacman } from "./core/pacman";
+import { CONST, Direction } from "../core/constant";
+import { GameEngine } from "../core/engine";
+import { EventManager } from "../core/events";
+import { GameMap } from "../core/map";
+import { Pacman } from "../core/pacman";
 console.log("Running the scripts");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
@@ -53,6 +53,7 @@ async () => {
         pacman.render();
     }
 }, ctx);
+/////////////////////////////////////////////////
 // Run the game when the page is ready
 document.addEventListener("DOMContentLoaded", async () => {
     // Prepare the resouces

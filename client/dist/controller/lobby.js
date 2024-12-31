@@ -1,4 +1,4 @@
-"use strict";
+import { WebSocketClient } from "../network/websocket";
 var Lobby;
 (function (Lobby) {
     const totalPlayersElement = document.getElementById("totalPlayers");
@@ -6,6 +6,12 @@ var Lobby;
     const createMatchButton = document.getElementById("createMatchButton");
     const leaveLobbyButton = document.getElementById("leaveLobbyButton");
     const findFriendBtn = document.getElementById("findFriendsButton");
+    const username = localStorage.getItem("username");
+    if (!username) {
+        window.location.href = "/";
+    }
+    const ws = WebSocketClient.getInstance(username);
+    console.log(ws.isConnected());
     ////////////////////////////////////////////
     // States
     let totalPlayers = 0;

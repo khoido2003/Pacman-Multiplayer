@@ -16,14 +16,13 @@ welcomeForm.addEventListener("submit", (event) => {
 
     ws.on(EventType.OPEN, () => {
       console.log("Websocket connected!");
+      window.location.href = "/lobby";
     });
 
     ws.on(EventType.MESSAGE, (data: string) => {
       console.log("Received: ", data);
     });
   }
-
-  window.location.href = "/lobby";
 });
 
 //////////////////////////////////////////////////////////

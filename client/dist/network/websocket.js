@@ -16,7 +16,7 @@ export var EventType;
 export class WebSocketClient {
     static instance = null;
     ws = null;
-    userId = generateId();
+    userId = "";
     server = `ws://localhost:5689/game`;
     username = "";
     eventHandler = new Map();
@@ -29,15 +29,17 @@ export class WebSocketClient {
         if (!WebSocketClient.instance) {
             WebSocketClient.instance = new WebSocketClient(username);
         }
+        localStorage.setItem("userId", WebSocketClient.instance.userId);
         return WebSocketClient.instance;
     }
     //////////////////////////////////////////
     //
     //
     connect() {
+        this.userId = localStorage.getItem("userId");
         const url = this.server + `?userId=${this.userId}` + `&username=${this.username}`;
         this.ws = new WebSocket(url);
-        this.ws.onopen = (e) => {
+        this.ws.onopen = () => {
             this.triggerEvent(EventType.OPEN, null);
         };
         this.ws.onerror = (e) => {
@@ -80,7 +82,8 @@ export class WebSocketClient {
         this.ws?.close();
     }
     isConnected() {
-        return this.ws?.readyState === WebSocket.OPEN;
+        console.log(this.ws);
+        return this.ws?.readyState === 1;
     }
     reconnect() {
         if (this.ws) {

@@ -19,3 +19,7 @@ export interface MapRead {
   height: number;
   tiles: number[][];
 }
+
+export const MESSAGE_TYPE = {
+  CREATE_MATCH: "CREATE_MATCH",
+};

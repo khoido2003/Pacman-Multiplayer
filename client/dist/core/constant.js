@@ -13,3 +13,6 @@ export var Direction;
     Direction["RIGHT"] = "right";
     Direction["LEFT"] = "left";
 })(Direction || (Direction = {}));
+export const MESSAGE_TYPE = {
+    CREATE_MATCH: "CREATE_MATCH",
+};

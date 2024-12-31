@@ -18,7 +18,7 @@ export enum EventType {
 export class WebSocketClient {
   private static instance: WebSocketClient | null = null;
   private ws: WebSocket | null = null;
-  private userId: string = generateId();
+  private userId: string = "";
   private server: string = `ws://localhost:5689/game`;
   private username: string = "";
   private eventHandler: Map<EventType, Function[]> = new Map();
@@ -34,6 +34,8 @@ export class WebSocketClient {
       WebSocketClient.instance = new WebSocketClient(username);
     }
 
+    localStorage.setItem("userId", WebSocketClient.instance.userId);
+
     return WebSocketClient.instance;
   }
 
@@ -41,12 +43,13 @@ export class WebSocketClient {
   //
   //
   private connect() {
+    this.userId = localStorage.getItem("userId") as string;
     const url =
       this.server + `?userId=${this.userId}` + `&username=${this.username}`;
 
     this.ws = new WebSocket(url);
 
-    this.ws.onopen = (e) => {
+    this.ws.onopen = () => {
       this.triggerEvent(EventType.OPEN, null);
     };
 
@@ -77,7 +80,7 @@ export class WebSocketClient {
     }
   }
 
-  public sendMessage(message: any) {
+  public sendMessage(message: string) {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) {
       this.ws.send(JSON.stringify(message));
     } else {
@@ -101,7 +104,8 @@ export class WebSocketClient {
   }
 
   public isConnected(): boolean {
-    return this.ws?.readyState === WebSocket.OPEN;
+    console.log(this.ws);
+    return this.ws?.readyState === 1;
   }
 
   public reconnect() {
