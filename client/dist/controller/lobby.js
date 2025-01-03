@@ -1,3 +1,4 @@
+import { LOCAL_STORAGE_TYPE } from "../core/constant";
 import { WebSocketClient } from "../network/websocket";
 var Lobby;
 (function (Lobby) {
@@ -6,7 +7,7 @@ var Lobby;
     const createMatchButton = document.getElementById("createMatchButton");
     const leaveLobbyButton = document.getElementById("leaveLobbyButton");
     const findFriendBtn = document.getElementById("findFriendsButton");
-    const username = localStorage.getItem("username");
+    const username = localStorage.getItem(LOCAL_STORAGE_TYPE.USERNAME);
     if (!username) {
         window.location.href = "/";
     }

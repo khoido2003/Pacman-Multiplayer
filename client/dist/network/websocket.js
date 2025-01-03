@@ -1,3 +1,4 @@
+import { LOCAL_STORAGE_TYPE } from "../core/constant";
 // Function to generate UUID-like ID in browser using the Web Crypto API
 const generateId = () => {
     const buffer = new Uint8Array(16);
@@ -29,14 +30,21 @@ export class WebSocketClient {
         if (!WebSocketClient.instance) {
             WebSocketClient.instance = new WebSocketClient(username);
         }
-        localStorage.setItem("userId", WebSocketClient.instance.userId);
+        localStorage.setItem(LOCAL_STORAGE_TYPE.USER_ID, WebSocketClient.instance.userId);
         return WebSocketClient.instance;
     }
     //////////////////////////////////////////
     //
     //
     connect() {
-        this.userId = localStorage.getItem("userId");
+        if (!localStorage.getItem(LOCAL_STORAGE_TYPE.USER_ID)) {
+            const userId = generateId();
+            localStorage.setItem(LOCAL_STORAGE_TYPE.USER_ID, userId);
+            this.userId = userId;
+        }
+        else {
+            this.userId = localStorage.getItem(LOCAL_STORAGE_TYPE.USER_ID);
+        }
         const url = this.server + `?userId=${this.userId}` + `&username=${this.username}`;
         this.ws = new WebSocket(url);
         this.ws.onopen = () => {

@@ -1,4 +1,4 @@
-import { MESSAGE_TYPE } from "../core/constant";
+import { LOCAL_STORAGE_TYPE, MESSAGE_TYPE } from "../core/constant";
 import { EventType, WebSocketClient } from "../network/websocket"; // Import your WebSocketClient class
 
 const form = document.getElementById("createMatchForm") as HTMLFormElement;
@@ -10,7 +10,7 @@ const feedbackMessage = document.getElementById(
 
 ///////////////////////////////////////////////////////////////
 
-const username = localStorage.getItem("username") as string;
+const username = localStorage.getItem(LOCAL_STORAGE_TYPE.USERNAME) as string;
 const ws = WebSocketClient.getInstance(username);
 
 form.addEventListener("submit", (event) => {
@@ -18,11 +18,14 @@ form.addEventListener("submit", (event) => {
   const matchName = matchNameInput.value.trim();
 
   if (matchName) {
-    ws.on(EventType.MESSAGE, (data: string) => {
-      console.log(data);
-    });
-
     const message = MESSAGE_TYPE.CREATE_MATCH + ":" + matchName;
     ws.sendMessage(message);
+
+    ws.on(EventType.MESSAGE, (data: string) => {
+      if (data.substring(0, 8) === MESSAGE_TYPE.SEND_MAP) {
+        localStorage.setItem("CURRENT_MAP", data.substring(9));
+        window.location.href = "/match";
+      }
+    });
   }
 });

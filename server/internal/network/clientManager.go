@@ -30,6 +30,10 @@ func (client *Client) RemoveRoomId() {
 	client.RoomId = ""
 }
 
+func (client *Client) SendMessage(message string) {
+	client.Conn.WriteMessage(websocket.TextMessage, []byte(message))
+}
+
 //////////////////////////////////////////////////
 
 type ClientManager struct {

@@ -1,3 +1,4 @@
+import { LOCAL_STORAGE_TYPE } from "../core/constant";
 import { WebSocketClient } from "../network/websocket";
 
 namespace Lobby {
@@ -21,7 +22,7 @@ namespace Lobby {
     "findFriendsButton",
   ) as HTMLButtonElement;
 
-  const username = localStorage.getItem("username") as string;
+  const username = localStorage.getItem(LOCAL_STORAGE_TYPE.USERNAME) as string;
 
   if (!username) {
     window.location.href = "/";
