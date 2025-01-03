@@ -15,11 +15,16 @@ export enum Direction {
 }
 
 export interface MapRead {
-  width: number;
-  height: number;
   tiles: number[][];
 }
 
 export const MESSAGE_TYPE = {
   CREATE_MATCH: "CREATE_MATCH",
+  SEND_MAP: "SEND_MAP",
+};
+
+export const LOCAL_STORAGE_TYPE = {
+  USER_ID: "USER_ID",
+  USERNAME: "USERNAME",
+  CURRENT_MAP: "CURRENT_MAP",
 };

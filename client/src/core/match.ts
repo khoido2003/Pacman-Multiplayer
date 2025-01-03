@@ -1,4 +1,11 @@
-import { CONST, Direction, MapRead } from "../core/constant";
+import { EventType, WebSocketClient } from "../network/websocket";
+import {
+  CONST,
+  Direction,
+  LOCAL_STORAGE_TYPE,
+  MapRead,
+  MESSAGE_TYPE,
+} from "../core/constant";
 import { GameEngine } from "../core/engine";
 import { EventManager } from "../core/events";
 import { GameMap } from "../core/map";
@@ -24,8 +31,20 @@ let pacman: Pacman;
 let events: EventManager;
 
 async function init() {
+  const username = localStorage.getItem(LOCAL_STORAGE_TYPE.USERNAME) as string;
+  const ws = WebSocketClient.getInstance(username);
+
+  ws.on(EventType.MESSAGE, (data: string) => {
+    console.log(data);
+  });
+
   // Init Map
-  const data = await loadMap();
+  const dataJson = localStorage.getItem(
+    LOCAL_STORAGE_TYPE.CURRENT_MAP,
+  ) as string;
+
+  const data = JSON.parse(dataJson) as MapRead;
+
   gameMap = new GameMap(data.tiles, CONST.TILE_SIZE, canvas, ctx!);
 
   // Init pacman

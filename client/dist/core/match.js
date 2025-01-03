@@ -1,4 +1,5 @@
-import { CONST, Direction } from "../core/constant";
+import { EventType, WebSocketClient } from "../network/websocket";
+import { CONST, Direction, LOCAL_STORAGE_TYPE, } from "../core/constant";
 import { GameEngine } from "../core/engine";
 import { EventManager } from "../core/events";
 import { GameMap } from "../core/map";
@@ -17,8 +18,14 @@ let gameMap;
 let pacman;
 let events;
 async function init() {
+    const username = localStorage.getItem(LOCAL_STORAGE_TYPE.USERNAME);
+    const ws = WebSocketClient.getInstance(username);
+    ws.on(EventType.MESSAGE, (data) => {
+        console.log(data);
+    });
     // Init Map
-    const data = await loadMap();
+    const dataJson = localStorage.getItem(LOCAL_STORAGE_TYPE.CURRENT_MAP);
+    const data = JSON.parse(dataJson);
     gameMap = new GameMap(data.tiles, CONST.TILE_SIZE, canvas, ctx);
     // Init pacman
     // Calculate the first position of pacman on the map

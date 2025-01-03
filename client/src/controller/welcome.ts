@@ -1,3 +1,4 @@
+import { LOCAL_STORAGE_TYPE } from "../core/constant";
 import { EventType, WebSocketClient } from "../network/websocket";
 
 const welcomeForm = document.getElementById("welcomeForm") as HTMLFormElement;
@@ -11,7 +12,7 @@ welcomeForm.addEventListener("submit", (event) => {
   const username = usernameInput?.value.trim() || "User";
 
   if (username) {
-    localStorage.setItem("username", username);
+    localStorage.setItem(LOCAL_STORAGE_TYPE.USERNAME, username);
     const ws = WebSocketClient.getInstance(username);
 
     ws.on(EventType.OPEN, () => {
