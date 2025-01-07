@@ -44,7 +44,9 @@ form.addEventListener("submit", (event) => {
         value["data"]["room"],
       );
 
-      window.location.href = "/match";
+      setTimeout(() => {
+        window.location.href = "/match";
+      }, 1000);
     });
   }
 });
