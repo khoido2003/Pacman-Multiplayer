@@ -16,6 +16,9 @@ var upgrader = websocket.Upgrader{
 
 func HandleConnections(w http.ResponseWriter, r *http.Request, pool *Pool) {
 
+	// Create new threadpool with 500 worker
+	workerPool := NewPool(500)
+
 	// Manage clients connect to the server
 	clientManager := NewClientManager()
 
@@ -38,6 +41,6 @@ func HandleConnections(w http.ResponseWriter, r *http.Request, pool *Pool) {
 	}
 	log.Printf("New connection from userID: %s\n", userID)
 
-	go HandleClient(conn, clientManager, roomManager, &userID)
+	go HandleClient(conn, workerPool, clientManager, roomManager, &userID)
 
 }

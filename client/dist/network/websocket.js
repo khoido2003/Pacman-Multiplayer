@@ -72,7 +72,7 @@ export class WebSocketClient {
     }
     sendMessage(message) {
         if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-            this.ws.send(JSON.stringify(message));
+            this.ws.send(message);
         }
         else {
             console.error("Websocket is not open. Message not sent!");

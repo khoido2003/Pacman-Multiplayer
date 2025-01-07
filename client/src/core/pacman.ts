@@ -1,4 +1,6 @@
-import { CONST, Direction } from "./constant";
+import { MessageFormat } from "../network/messageFormat";
+import { WebSocketClient } from "../network/websocket";
+import { CONST, Direction, LOCAL_STORAGE_TYPE, MESSAGE_TYPE } from "./constant";
 import { GameMap } from "./map";
 
 export class Pacman {
@@ -31,6 +33,17 @@ export class Pacman {
   private movementCooldown = 0;
   private movementCooldownMax = 10;
 
+  private ws: WebSocketClient;
+  private userId: string = localStorage.getItem(
+    LOCAL_STORAGE_TYPE.USER_ID,
+  ) as string;
+  private username: string = localStorage.getItem(
+    LOCAL_STORAGE_TYPE.USERNAME,
+  ) as string;
+
+  private roomId: string = localStorage.getItem(
+    LOCAL_STORAGE_TYPE.CURRENT_ROOM_ID,
+  ) as string;
   // There is two way to render the character: draw with canvas or use sprite
   // image and render it to the canvas
 
@@ -68,6 +81,11 @@ export class Pacman {
       console.error("Failed to load sprite sheet", error);
     };
     this.spriteSheet.src = "../assets/sprites/sprite.png";
+
+    const username = localStorage.getItem(
+      LOCAL_STORAGE_TYPE.USERNAME,
+    ) as string;
+    this.ws = WebSocketClient.getInstance(username);
   }
 
   ///////////////////////////////////////
@@ -105,30 +123,6 @@ export class Pacman {
   //Render pacman on the screen
 
   render() {
-    // // Draw the body
-    // this.ctx.beginPath();
-    // this.ctx.arc(this.x, this.y, this.size, 0.2 * Math.PI, 1.8 * Math.PI);
-    // this.ctx.lineTo(this.x, this.y);
-    // this.ctx.fillStyle = "yellow";
-    // this.ctx.fill();
-    // this.ctx.closePath();
-    //
-    // // Draw the eye
-    // this.ctx.beginPath();
-    // this.ctx.arc(
-    //   this.x,
-    //   this.y - this.size / 2.5,
-    //   this.size / 7,
-    //   0,
-    //   2 * Math.PI,
-    // );
-    // this.ctx.fillStyle = "black";
-    // this.ctx.fill();
-    // this.ctx.closePath();
-    //
-
-    //////////////////
-
     // Making the pacman open and close mouth animation
     this.reRenderFrameTimeCnt++;
     if (this.reRenderFrameTimeCnt == this.maxReRenderFrameTime) {
@@ -277,34 +271,63 @@ export class Pacman {
 
     switch (direction) {
       case Direction.UP:
-        if (this.canMove(Direction.UP)) this.y -= this.speed;
+        if (this.canMove(Direction.UP)) {
+          this.y -= this.speed;
+        }
         this.direction = Direction.UP;
         this.movementCooldown = 0;
 
         break;
 
       case Direction.DOWN:
-        if (this.canMove(Direction.DOWN)) this.y += this.speed;
+        if (this.canMove(Direction.DOWN)) {
+          this.y += this.speed;
+        }
+
         this.direction = Direction.DOWN;
         this.movementCooldown = 0;
 
         break;
 
       case Direction.RIGHT:
-        if (this.canMove(Direction.RIGHT)) this.x += this.speed;
+        if (this.canMove(Direction.RIGHT)) {
+          this.x += this.speed;
+        }
+
         this.direction = Direction.RIGHT;
         this.movementCooldown = 0;
 
         break;
 
       case Direction.LEFT:
-        if (this.canMove(Direction.LEFT)) this.x -= this.speed;
+        if (this.canMove(Direction.LEFT)) {
+          this.x -= this.speed;
+        }
         this.direction = Direction.LEFT;
         this.movementCooldown = 0;
 
         break;
     }
 
+    setInterval(() => {
+      this.updateDataToServer();
+    }, 100);
     this.movementCooldown = this.movementCooldownMax;
+  }
+
+  updateDataToServer() {
+    // Update the new postion to the server
+    const mes = MessageFormat.format(
+      MESSAGE_TYPE.UPDATE_PACMAN_POSITION,
+      this.userId,
+      "",
+      {
+        username: this.username,
+        x: this.x,
+        y: this.y,
+        roomId: this.roomId,
+      },
+    );
+    this.ws.sendMessage(mes);
   }
 }

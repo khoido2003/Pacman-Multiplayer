@@ -41,6 +41,15 @@ func (rm *RoomManager) AddClientToRoom(roomId string, player *Client) *Room {
 	return room
 }
 
+func (rm *RoomManager) GetCurrentRoom(roomId string) (*Room, bool) {
+	room, ok := rm.Rooms[roomId]
+
+	if !ok {
+		return nil, false
+	}
+	return room, true
+}
+
 func (rm *RoomManager) RemoveRoom(roomId string) {
 	delete(rm.Rooms, roomId)
 }
