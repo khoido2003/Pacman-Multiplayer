@@ -7,17 +7,25 @@ import { Pacman } from "../core/pacman";
 console.log("Running the scripts");
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-async function loadMap() {
-    // Load the map
-    const response = await fetch("./assets/maps/map1.json");
-    const data = (await response.json());
-    return data;
-}
+/*
+ * this method used when server is not online so stil can load the map
+ * directly from the client without the need of waiting for response from
+ * the server
+
+ * */
+// async function loadMap(): Promise<MapRead> {
+//   // Load the map
+//   const response = await fetch("./assets/maps/map1.json");
+//   const data = (await response.json()) as MapRead;
+//
+//   return data;
+// }
 //////////////////////////////////////////////
 let gameMap;
 let pacman;
 let events;
 async function init() {
+    // GET the socket connection to server
     const username = localStorage.getItem(LOCAL_STORAGE_TYPE.USERNAME);
     const ws = WebSocketClient.getInstance(username);
     ws.on(EventType.MESSAGE, (data) => {

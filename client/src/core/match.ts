@@ -16,13 +16,20 @@ console.log("Running the scripts");
 const canvas = document.getElementById("gameCanvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d");
 
-async function loadMap(): Promise<MapRead> {
-  // Load the map
-  const response = await fetch("./assets/maps/map1.json");
-  const data = (await response.json()) as MapRead;
+/*
+ * this method used when server is not online so stil can load the map
+ * directly from the client without the need of waiting for response from
+ * the server
 
-  return data;
-}
+ * */
+
+// async function loadMap(): Promise<MapRead> {
+//   // Load the map
+//   const response = await fetch("./assets/maps/map1.json");
+//   const data = (await response.json()) as MapRead;
+//
+//   return data;
+// }
 
 //////////////////////////////////////////////
 
@@ -31,6 +38,7 @@ let pacman: Pacman;
 let events: EventManager;
 
 async function init() {
+  // GET the socket connection to server
   const username = localStorage.getItem(LOCAL_STORAGE_TYPE.USERNAME) as string;
   const ws = WebSocketClient.getInstance(username);
 

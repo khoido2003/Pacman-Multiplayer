@@ -18,13 +18,15 @@ export interface MapRead {
   tiles: number[][];
 }
 
-export const MESSAGE_TYPE = {
-  CREATE_MATCH: "CREATE_MATCH",
-  SEND_MAP: "SEND_MAP",
-};
+export enum MESSAGE_TYPE {
+  CREATE_MATCH = "CREATE_MATCH",
+  SEND_MAP = "SEND_MAP",
+  UPDATE_PACMAN_POSITION = "UPDATE_PACMAN_POSITION",
+}
 
 export const LOCAL_STORAGE_TYPE = {
   USER_ID: "USER_ID",
   USERNAME: "USERNAME",
   CURRENT_MAP: "CURRENT_MAP",
+  CURRENT_ROOM_ID: "CURRENT_ROOM_ID",
 };

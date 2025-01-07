@@ -6,7 +6,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func HandleClient(conn *websocket.Conn, cm *ClientManager, rm *RoomManager, userID *string) {
+func HandleClient(conn *websocket.Conn, wp *Pool, cm *ClientManager, rm *RoomManager, userID *string) {
 	log.Println("New client connected: ", conn.RemoteAddr())
 	client := NewClient(userID, conn)
 
@@ -30,12 +30,12 @@ func HandleClient(conn *websocket.Conn, cm *ClientManager, rm *RoomManager, user
 			break
 		}
 
-		log.Printf("Received message: %s\n", message)
+		log.Println(string(message))
 
 		//////////////////////////////////
 
 		// Process message
-		MessageProcessor(string(message), rm, client, cm)
-
+		messageProcessor := CreateNewMessageProcessor(wp, rm, client, cm)
+		messageProcessor.ProcessMessage(string(message))
 	}
 }

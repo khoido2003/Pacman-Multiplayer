@@ -13,12 +13,15 @@ export var Direction;
     Direction["RIGHT"] = "right";
     Direction["LEFT"] = "left";
 })(Direction || (Direction = {}));
-export const MESSAGE_TYPE = {
-    CREATE_MATCH: "CREATE_MATCH",
-    SEND_MAP: "SEND_MAP",
-};
+export var MESSAGE_TYPE;
+(function (MESSAGE_TYPE) {
+    MESSAGE_TYPE["CREATE_MATCH"] = "CREATE_MATCH";
+    MESSAGE_TYPE["SEND_MAP"] = "SEND_MAP";
+    MESSAGE_TYPE["UPDATE_PACMAN_POSITION"] = "UPDATE_PACMAN_POSITION";
+})(MESSAGE_TYPE || (MESSAGE_TYPE = {}));
 export const LOCAL_STORAGE_TYPE = {
     USER_ID: "USER_ID",
     USERNAME: "USERNAME",
     CURRENT_MAP: "CURRENT_MAP",
+    CURRENT_ROOM_ID: "CURRENT_ROOM_ID",
 };
