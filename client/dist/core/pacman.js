@@ -202,6 +202,7 @@ export class Pacman {
             case Direction.UP:
                 if (this.canMove(Direction.UP)) {
                     this.y -= this.speed;
+                    this.updateDataToServer();
                 }
                 this.direction = Direction.UP;
                 this.movementCooldown = 0;
@@ -209,6 +210,7 @@ export class Pacman {
             case Direction.DOWN:
                 if (this.canMove(Direction.DOWN)) {
                     this.y += this.speed;
+                    this.updateDataToServer();
                 }
                 this.direction = Direction.DOWN;
                 this.movementCooldown = 0;
@@ -216,6 +218,7 @@ export class Pacman {
             case Direction.RIGHT:
                 if (this.canMove(Direction.RIGHT)) {
                     this.x += this.speed;
+                    this.updateDataToServer();
                 }
                 this.direction = Direction.RIGHT;
                 this.movementCooldown = 0;
@@ -223,14 +226,12 @@ export class Pacman {
             case Direction.LEFT:
                 if (this.canMove(Direction.LEFT)) {
                     this.x -= this.speed;
+                    this.updateDataToServer();
                 }
                 this.direction = Direction.LEFT;
                 this.movementCooldown = 0;
                 break;
         }
-        setInterval(() => {
-            this.updateDataToServer();
-        }, 100);
         this.movementCooldown = this.movementCooldownMax;
     }
     updateDataToServer() {
