@@ -22,7 +22,9 @@ form.addEventListener("submit", (event) => {
             const value = JSON.parse(data);
             localStorage.setItem(LOCAL_STORAGE_TYPE.CURRENT_MAP, JSON.stringify(value["data"]["map"]));
             localStorage.setItem(LOCAL_STORAGE_TYPE.CURRENT_ROOM_ID, value["data"]["room"]);
-            window.location.href = "/match";
+            setTimeout(() => {
+                window.location.href = "/match";
+            }, 1000);
         });
     }
 });

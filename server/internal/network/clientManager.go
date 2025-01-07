@@ -12,6 +12,7 @@ type Client struct {
 	UserId string
 	RoomId string
 	Conn   *websocket.Conn
+	Mutex  sync.Mutex
 }
 
 func NewClient(userId *string, conn *websocket.Conn) *Client {

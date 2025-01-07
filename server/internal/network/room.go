@@ -30,6 +30,7 @@ func NewRoom(roomId string) *Room {
 		Ticker:        time.NewTicker(100 * time.Millisecond),
 		IsGameActive:  false,
 		UpdateChannel: channel,
+		InputChannel:  make(chan string),
 	}
 }
 
@@ -38,9 +39,6 @@ func (room *Room) SetCurrentMap(curMap [][]int) {
 }
 
 func (room *Room) StartGame() {
-	if room.IsGameActive {
-		log.Println("Game already active!")
-	}
 
 	room.IsGameActive = true
 	go room.GameLoop()
@@ -51,6 +49,7 @@ func (room *Room) AddCLientToRoom(clientId string, client *Client) {
 }
 
 func (r *Room) GameLoop() {
+	log.Println("GameLoop started for room:", r.ID)
 	for r.IsGameActive {
 		select {
 
@@ -58,13 +57,14 @@ func (r *Room) GameLoop() {
 			r.ProcessPlayerInput(input)
 
 		case state := <-r.UpdateChannel:
-			r.BroadcastGameState(state)
+			go r.BroadcastGameState(state)
 
 		case <-time.After(100 * time.Millisecond):
 			r.GameState.UpdateGameLogic()
 			r.UpdateChannel <- r.GameState
 		}
 	}
+	log.Println("GameLoop ended for room:", r.ID)
 }
 
 func (room *Room) StopGame() {
@@ -94,7 +94,10 @@ func (r *Room) BroadcastGameState(state *game.GameState) {
 	}
 
 	for _, player := range r.Players {
+
+		player.Mutex.Lock()
 		err := player.Conn.WriteJSON(msg)
+		player.Mutex.Unlock()
 
 		if err != nil {
 			log.Println("Error sending message to player", player.UserId, err)

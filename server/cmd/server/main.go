@@ -11,12 +11,18 @@ import (
 
 func main() {
 
-	// Start new threadpool with 100 workers
-	pool := network.NewPool(100)
+	// Create new threadpool with 500 worker
+	workerPool := network.NewPool(500)
+
+	// Manage clients connect to the server
+	clientManager := network.NewClientManager()
+
+	// Init Room Manager
+	roomManager := network.NewRoomManager()
 
 	// Start websocket server
 	http.HandleFunc("/game", func(response http.ResponseWriter, request *http.Request) {
-		network.HandleConnections(response, request, pool)
+		network.HandleConnections(response, request, workerPool, clientManager, roomManager)
 	})
 
 	// Setup the server
@@ -35,7 +41,7 @@ func main() {
 	go func() {
 		<-signalChan
 		log.Println("Shutting down server...")
-		pool.Stop()
+		workerPool.Stop()
 		server.Close()
 	}()
 

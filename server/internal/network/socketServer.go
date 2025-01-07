@@ -14,18 +14,7 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func HandleConnections(w http.ResponseWriter, r *http.Request, pool *Pool) {
-
-	// Create new threadpool with 500 worker
-	workerPool := NewPool(500)
-
-	// Manage clients connect to the server
-	clientManager := NewClientManager()
-
-	// Init Room Manager
-	roomManager := NewRoomManager()
-
-	////////////////////////////////////////////////////////////////
+func HandleConnections(w http.ResponseWriter, r *http.Request, workerPool *Pool, clientManager *ClientManager, roomManager *RoomManager) {
 
 	// Upgrade the HTTP connection to WebSocket
 	conn, err := upgrader.Upgrade(w, r, nil)

@@ -14,7 +14,6 @@ type MessageProcessor struct {
 	roomManager   *RoomManager
 	client        *Client
 	clientManager *ClientManager
-	InputChannel  chan string
 }
 
 func CreateNewMessageProcessor(wp *Pool, rm *RoomManager, client *Client, cm *ClientManager) *MessageProcessor {
@@ -24,7 +23,6 @@ func CreateNewMessageProcessor(wp *Pool, rm *RoomManager, client *Client, cm *Cl
 		roomManager:   rm,
 		client:        client,
 		clientManager: cm,
-		InputChannel:  make(chan string),
 	}
 }
 
@@ -40,7 +38,7 @@ var messageFormat struct {
 
 func (mp *MessageProcessor) ProcessMessage(message string) {
 
-	// Handle message
+	//Handle message
 	err := json.Unmarshal([]byte(message), &messageFormat)
 	if err != nil {
 		log.Println("Invalid input format:", err)
@@ -50,12 +48,17 @@ func (mp *MessageProcessor) ProcessMessage(message string) {
 	log.Println("PRINT: ", message)
 
 	roomId, ok := messageFormat.Data["roomId"].(string)
+
 	if !ok {
 		log.Println("No room ID provided")
 	} else {
-		log.Println(roomId)
+
 		room, ok := mp.roomManager.GetCurrentRoom(roomId)
 		log.Println(room, ok)
+
+		mp.room = room
+		go mp.room.AddCLientToRoom(mp.client.UserId, mp.client)
+		mp.room.StartGame()
 
 	}
 
@@ -66,8 +69,7 @@ func (mp *MessageProcessor) ProcessMessage(message string) {
 		mp.createNewRoomFn()
 
 	case string(constant.UPDATE_PACMAN_POSITION):
-		log.Println("Sending input to InputChannel: ", message)
-		mp.InputChannel <- message
+		mp.room.InputChannel <- message
 
 	default:
 		log.Println("NOT A REQUEST TYPE")
@@ -87,7 +89,6 @@ func (mp *MessageProcessor) createNewRoomFn() {
 
 	mp.room = room
 	mp.roomId = roomId
-	mp.room.InputChannel = mp.InputChannel
 	matchName, ok := messageFormat.Data["matchName"].(string)
 	if !ok {
 		log.Println("Error: matchName not found or is not a string")
