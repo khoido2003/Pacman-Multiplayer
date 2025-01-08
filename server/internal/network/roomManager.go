@@ -2,6 +2,7 @@ package network
 
 import (
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/google/uuid"
@@ -60,6 +61,29 @@ func (rm *RoomManager) GetCurrentRoom(roomId string) (*Room, bool) {
 		return nil, false
 	}
 	return room, true
+}
+
+func containsIngnorecase(str, substr string) bool {
+	str = strings.ToLower(str)
+	substr = strings.ToLower(substr)
+
+	return strings.Contains(str, substr)
+}
+
+func (rm *RoomManager) FindRoomByName(roomName string) []*Room {
+	rm.Mutex.Lock()
+	defer rm.Mutex.Unlock()
+
+	var foundRooms []*Room
+
+	for _, room := range rm.Rooms {
+		if containsIngnorecase(room.RoomName, roomName) {
+			foundRooms = append(foundRooms, room)
+		}
+	}
+
+	return foundRooms
+
 }
 
 func (rm *RoomManager) RemoveRoom(roomId string) {

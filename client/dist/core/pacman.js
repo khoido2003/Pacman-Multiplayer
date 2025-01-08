@@ -64,7 +64,7 @@ export class Pacman {
         // Determine the current tile position based on the map layout and offset
         const curTileX = Math.ceil((this.x - this.curOffsetX - CONST.TILE_SIZE / 2) / CONST.TILE_SIZE);
         const curTileY = Math.ceil((this.y - this.curOffsetY - CONST.TILE_SIZE / 2) / CONST.TILE_SIZE);
-        console.log(curTileX, curTileY);
+        // console.log(curTileX, curTileY);
         // Recalculate the exact pixel position to align with the center of the tile
         this.x =
             curTileX * CONST.TILE_SIZE +

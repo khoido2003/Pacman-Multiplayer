@@ -1,6 +1,6 @@
 package game
 
 type Ghost struct {
-	X int
-	Y int
+	X float32
+	Y float32
 }
