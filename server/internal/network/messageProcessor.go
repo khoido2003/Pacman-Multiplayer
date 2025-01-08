@@ -5,6 +5,7 @@ import (
 	"log"
 	"server/internal/constant"
 	"server/internal/game"
+	"server/internal/utilities"
 )
 
 type MessageProcessor struct {
@@ -29,7 +30,7 @@ func CreateNewMessageProcessor(wp *Pool, rm *RoomManager, client *Client, cm *Cl
 /////////////////////////////////////////////////
 
 // Process message from client
-var messageFormat struct {
+type MessageFormat struct {
 	Type   string                 `json:"type"`
 	UserId string                 `json:"userId"`
 	Action string                 `json:"action"`
@@ -37,6 +38,8 @@ var messageFormat struct {
 }
 
 func (mp *MessageProcessor) ProcessMessage(message string) {
+
+	var messageFormat MessageFormat
 
 	//Handle message
 	err := json.Unmarshal([]byte(message), &messageFormat)
@@ -49,6 +52,7 @@ func (mp *MessageProcessor) ProcessMessage(message string) {
 
 	roomId, ok := messageFormat.Data["roomId"].(string)
 
+	log.Println("+_+_+_+_", roomId, ok)
 	if !ok {
 		log.Println("No room ID provided")
 	} else {
@@ -66,10 +70,13 @@ func (mp *MessageProcessor) ProcessMessage(message string) {
 	//
 	switch messageFormat.Type {
 	case string(constant.CREATE_MATCH):
-		mp.createNewRoomFn()
+		mp.createNewRoomFn(messageFormat)
 
 	case string(constant.UPDATE_PACMAN_POSITION):
 		mp.room.InputChannel <- message
+
+	case string(constant.REQUEST_FIND_PLAYERS_BY_NAME):
+		mp.SearchRoomByName(messageFormat)
 
 	default:
 		log.Println("NOT A REQUEST TYPE")
@@ -81,7 +88,10 @@ func (mp *MessageProcessor) ProcessMessage(message string) {
 ///////////////////////////////////////////////////
 
 // Utilities function
-func (mp *MessageProcessor) createNewRoomFn() {
+
+// CREATE NEW ROOM/MATCH
+func (mp *MessageProcessor) createNewRoomFn(messageFormat MessageFormat) {
+
 	// Create new room
 	room, roomId := mp.roomManager.CreateNewRoom()
 
@@ -109,14 +119,11 @@ func (mp *MessageProcessor) createNewRoomFn() {
 		log.Println(err)
 	}
 
-	msg := map[string]interface{}{
-		"type": constant.SEND_MAP,
-		"data": map[string]interface{}{
-			"room": roomId,
-			"map":  loadedMap,
-		}}
+	msgJson, err := utilities.CreateMessage(string(constant.SEND_MAP), map[string]interface{}{
+		"room": roomId,
+		"map":  loadedMap,
+	})
 
-	msgJson, err := json.Marshal(msg)
 	if err != nil {
 		log.Println("Error marshalling message:", err)
 		return
@@ -124,4 +131,33 @@ func (mp *MessageProcessor) createNewRoomFn() {
 
 	mp.client.SendMessage(string(msgJson))
 	mp.room.StartGame()
+}
+
+// ---------------------------------------------------
+
+// SEARCH ROOM/MATCH
+
+func (mp *MessageProcessor) SearchRoomByName(mes MessageFormat) {
+	query := mes.Data["query"].(string)
+	log.Println(query)
+
+	listRooms := mp.roomManager.FindRoomByName(query)
+
+	var sentData []string
+	for _, room := range listRooms {
+		sentData = append(sentData, room.RoomName)
+	}
+
+	msgJson, err := utilities.CreateMessage(string(constant.RESPONSE_FIND_PLAYERS_BY_NAME), map[string]interface {
+	}{
+		"usersList": sentData,
+	})
+
+	if err != nil {
+		log.Println("Error marshalling message", err)
+		return
+	}
+
+	mp.client.SendMessage(string(msgJson))
+
 }

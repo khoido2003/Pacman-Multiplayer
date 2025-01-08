@@ -102,7 +102,7 @@ export class Pacman {
       (this.y - this.curOffsetY - CONST.TILE_SIZE / 2) / CONST.TILE_SIZE,
     );
 
-    console.log(curTileX, curTileY);
+    // console.log(curTileX, curTileY);
 
     // Recalculate the exact pixel position to align with the center of the tile
     this.x =

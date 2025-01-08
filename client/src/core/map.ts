@@ -26,8 +26,8 @@ export class GameMap {
     this.resizeCanvas();
 
     this.tilesMatrixPos = this.calcOffsetMaze();
-    console.log(this.tilesMatrixPos);
-    console.log(this.tiles);
+    // console.log(this.tilesMatrixPos);
+    // console.log(this.tiles);
 
     // if the browser change size, update the canvas
     window.addEventListener("resize", () => {
@@ -88,7 +88,7 @@ export class GameMap {
       });
     });
 
-    console.log(this.tilesMatrixPos);
+    /*     console.log(this.tilesMatrixPos); */
     return tilesMatrixPos;
   }
 

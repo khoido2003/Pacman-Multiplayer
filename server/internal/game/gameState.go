@@ -1,21 +1,22 @@
 package game
 
 import (
+	"log"
 	"sync"
 )
 
 type GameState struct {
-	currentMap      [][]int
-	ghosts          []*Ghost
-	playersPosition []*PlayerPosition
-	Mutex           sync.Mutex
-	Changes         map[string]interface{}
+	CurrentMap       [][]int
+	Ghosts           []*Ghost
+	PlayersPositions []*PlayerPosition
+	Mutex            sync.Mutex
+	Changes          map[string]interface{}
 }
 
 func (gs *GameState) SetCurrentMap(currentMap [][]int) {
 	gs.Mutex.Lock()
 	defer gs.Mutex.Unlock()
-	gs.currentMap = currentMap
+	gs.CurrentMap = currentMap
 }
 
 func (gs *GameState) UpdateGameLogic() {
@@ -33,12 +34,16 @@ func (gs *GameState) MarkChange(key string, value interface{}) {
 	if gs.Changes == nil {
 		gs.Changes = make(map[string]interface{})
 	}
+
+	log.Println("MarkChange - Adding key:", key, "value:", value) // Debugging
 	gs.Changes[key] = value
 }
 
 func (gs *GameState) ClearChanges() {
 	gs.Changes = make(map[string]interface{})
 }
+
+/////////////////////////////////////////////////////////
 
 // Example using delta update
 // func (gs *GameState) UpdatePlayerPosition(playerId string, x, y int) {

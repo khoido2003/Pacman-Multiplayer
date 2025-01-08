@@ -32,6 +32,9 @@ func (client *Client) RemoveRoomId() {
 }
 
 func (client *Client) SendMessage(message string) {
+
+	client.Mutex.Lock()
+	defer client.Mutex.Unlock()
 	client.Conn.WriteMessage(websocket.TextMessage, []byte(message))
 }
 

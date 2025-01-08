@@ -1,7 +1,9 @@
 package network
 
 import (
+	"encoding/json"
 	"log"
+	"server/internal/constant"
 	"server/internal/game"
 	"time"
 )
@@ -24,7 +26,6 @@ func NewRoom(roomId string) *Room {
 	return &Room{
 		ID:      roomId,
 		Players: make(map[string]*Client),
-
 		// Create new game state
 		GameState:     &game.GameState{},
 		Ticker:        time.NewTicker(100 * time.Millisecond),
@@ -49,7 +50,7 @@ func (room *Room) AddCLientToRoom(clientId string, client *Client) {
 }
 
 func (r *Room) GameLoop() {
-	log.Println("GameLoop started for room:", r.ID)
+	// log.Println("GameLoop started for room:", r.ID)
 	for r.IsGameActive {
 		select {
 
@@ -64,7 +65,7 @@ func (r *Room) GameLoop() {
 			r.UpdateChannel <- r.GameState
 		}
 	}
-	log.Println("GameLoop ended for room:", r.ID)
+	/* 	log.Println("GameLoop ended for room:", r.ID) */
 }
 
 func (room *Room) StopGame() {
@@ -79,14 +80,61 @@ func (room *Room) StopGame() {
 
 ////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////
+
 func (r *Room) ProcessPlayerInput(input string) {
-	log.Println("PROCESS:", input)
+
+	var inputData struct {
+		Type   string                 `json:"type"`
+		UserId string                 `json:"userId"`
+		Action string                 `json:"action"`
+		Data   map[string]interface{} `json:"data"`
+	}
+
+	err := json.Unmarshal([]byte(input), &inputData)
+	if err != nil {
+		log.Println("Invalid input format:", err)
+		return
+	}
+
+	if inputData.Type == string(constant.UPDATE_PACMAN_POSITION) {
+		x, xOk := inputData.Data["x"].(float64)
+		y, yOk := inputData.Data["y"].(float64)
+		username, userOk := inputData.Data["username"].(string)
+
+		if xOk && yOk && userOk {
+
+			// Check if user position already exist
+			updated := false
+			for _, playerPos := range r.GameState.PlayersPositions {
+				if playerPos.UserId == inputData.UserId {
+					playerPos.UpdatePosition(x, y)
+					r.GameState.MarkChange(inputData.UserId, playerPos)
+					updated = true
+					break
+				}
+			}
+
+			if !updated {
+				newPlayerPos := game.NewPlayerPosition(username, inputData.UserId, x, y)
+				r.GameState.PlayersPositions = append(r.GameState.PlayersPositions, newPlayerPos)
+				r.GameState.MarkChange(inputData.UserId, newPlayerPos)
+			}
+		} else {
+			log.Println("Invalid position data - xOk:", xOk, "yOk:", yOk, "userOk:", userOk)
+		}
+	} else {
+		log.Println("Input type is not UPDATE_PACMAN_POSITION, type:", inputData.Type)
+	}
 }
+
+// --------------------------------------------------
 
 func (r *Room) BroadcastGameState(state *game.GameState) {
 
 	deltaUpdate := state.Changes
-	state.ClearChanges()
+
+	defer state.ClearChanges()
 
 	msg := map[string]interface{}{
 		"type": "GAME_UPDATE",
